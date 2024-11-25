@@ -78,7 +78,7 @@ const idContainer = {
     id: 0,
     getId() {
         let id = this.id;
-        this.id++;
+        this.id += 1;
         return id;
     }
 }
@@ -91,10 +91,7 @@ const inputProperties = ref([{
 }]);
 
 function deteleProperty(internalId) {
-    const index = inputProperties.value.findIndex(e => e.internalId === internalId);
-    if (index !== -1) {
-        inputProperties.value.splice(index, 1); 
-    }
+    inputProperties.value = inputProperties.value.filter(e => e.internalId !== internalId);
 }
 
 const properties = computed(() => {
