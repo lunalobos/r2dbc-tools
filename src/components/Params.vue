@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div v-for="inputProperty in inputProperties" class="flex flex-row m-2">
+        <div v-for="inputProperty in inputProperties" class="flex flex-row m-2" :id="inputProperty.internalId">
             <div class="w-1/6">
                 <button type="button" class="bg-red-800 hover:bg-red-900 text-white 
                 font-bold py-2 px-4 rounded-2xl delay-300 transition-all align-middle " @click="deteleProperty(inputProperty.internalId)">
@@ -52,7 +52,7 @@
             <div class="w-1/6">
                 <button type="button" class="bg-green-700 hover:bg-green-800 text-white 
                 font-bold py-2 px-4 rounded-2xl delay-300 transition-all"
-                    @click="inputProperties.push({ name: '', id: false, type: '' })">
+                    @click="inputProperties.push({ internalId: uuidv6(), name: '', id: false, type: '' })">
                     <svg class="w-6 h-6 text-white" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -71,27 +71,20 @@ import { ref, computed, watch } from 'vue'
 import { types} from '@/scripts/javaCode';
 import { JavaProperty, JavaAnnotation } from '@/scripts/codeTypes';
 import { usePropertiesStore } from '@/stores/properties';
+import { v6 as uuidv6 } from 'uuid';
 
 const propertiesStore = usePropertiesStore();
 
-const idContainer = {
-    id: 0,
-    getId() {
-        let id = this.id;
-        this.id += 1;
-        return id;
-    }
-}
-
 const inputProperties = ref([{
-    internalId: idContainer.getId(),
+    internalId: uuidv6(),
     name: '',
     id: false,
     type: ''
 }]);
 
 function deteleProperty(internalId) {
-    inputProperties.value = inputProperties.value.filter(e => e.internalId !== internalId);
+    const index = inputProperties.value.findIndex(e => e.internalId === internalId);
+    inputProperties.value.splice(index, 1);
 }
 
 const properties = computed(() => {
