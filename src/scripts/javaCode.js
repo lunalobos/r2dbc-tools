@@ -1,4 +1,4 @@
-import { JavaAnnotation, JavaType } from "./codeTypes"
+import {  JavaType } from "./codeTypes"
 
 export const types = [
     new JavaType("String"),

@@ -1,7 +1,7 @@
 <template>
     <div class="m-2 text-center">
         <h4 class="font-medium text-xl">
-        Entity Code
+        {{title}}
         </h4>
     </div>
     
@@ -18,31 +18,48 @@
                     <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z" clip-rule="evenodd"/>
                 </svg>
             </div>
-            
         </div>
+        <pre>
+            <code>
+<TokenComponet v-for="token in tokenCode" :token="token" /> 
+            </code>
+        </pre>
         
-        
-        <TokenComponet v-for="token in tokenCode" :token="token" />
     </div>
 </template>
 
 <script setup>
 import { tokens } from '@/scripts/format';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import TokenComponet from './TokenComponent.vue';
-import { ref } from 'vue';
-
+import { java } from '@/scripts/javaFormat';
+import { sql } from '@/scripts/sql';
 const props = defineProps({
-    code: String
+    code: String,
+    title: String,
+    languaje: String
 });
+
+const languaje = computed(() => {
+    switch(props.languaje.toLowerCase()){
+        case 'java':
+            return java;
+        case 'sql':
+            return sql;
+        default:
+            return java;
+    }
+});
+
+const title = computed(() => props.title);
 
 const code = computed(() => {
     return props.code;
-})
+});
 
 const tokenCode = computed(() => {
-    return tokens(code.value);
-})
+    return tokens(code.value, languaje.value);
+});
 
 const clip = ref(false);
 

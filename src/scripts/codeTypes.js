@@ -78,7 +78,7 @@ export class JavaAnnotation {
         if(this.value === undefined)
             return `@${this.name}\n`;
         else
-            return `@${this.name}("${this.value}")\n`;
+            return `@${this.name}(${this.value})\n`;
     }
 }
 
