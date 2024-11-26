@@ -8,11 +8,14 @@
             <div class="w-1/12 ml-1">
                 <label class="block leading-6 text-gray-900 font-medium mb-1">Id</label>
             </div>
+            <div class="w-1/12 ml-1">
+                <label class="block leading-6 text-gray-900 font-medium mb-1">Un</label>
+            </div>
             <div class="w-1/4 text-center ml-1">
                 <label class="block leading-6 text-gray-900 font-medium mb-1">Type</label>
             </div>
 
-            <div class="w-1/2 text-center">
+            <div class="w-5/12 text-center">
                 <label class="block leading-6 text-gray-900 font-medium mb-1">Name</label>
             </div>
         </div>
@@ -29,9 +32,14 @@
                 </button>
             </div>
             <div class="w-1/12 items-center align-middle ml-1">
-                <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded
-                 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 
-                 dark:bg-gray-700 dark:border-gray-600 mt-2 " v-model="inputProperty.id">
+                <input type="checkbox" class="mt-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded
+                 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2
+                  dark:bg-gray-700 dark:border-gray-600" v-model="inputProperty.id">
+            </div>
+            <div class="w-1/12 items-center align-middle ml-1">
+                <input type="checkbox" class="mt-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded
+                 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2
+                  dark:bg-gray-700 dark:border-gray-600 " :disabled="inputProperty.id" v-model="inputProperty.unique">
             </div>
             <div class="w-1/4 text-center">
 
@@ -43,7 +51,7 @@
                 </select>
             </div>
 
-            <div class="w-1/2 text-center ml-1">
+            <div class="w-5/12 text-center ml-1">
                 <input type="text" class="block h-9 w-full rounded-lg border-0 ml-2 text-gray-900 
                     ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6 text-center" v-model="inputProperty.name">
             </div>
@@ -52,7 +60,7 @@
             <div class="w-1/6">
                 <button type="button" class="bg-green-700 hover:bg-green-800 text-white 
                 font-bold py-2 px-4 rounded-2xl delay-300 transition-all"
-                    @click="inputProperties.push({ internalId: uuidv6(), name: '', id: false, type: '' })">
+                    @click="inputProperties.push({ internalId: uuidv6(), name: '', id: false, type: 'String', unique: false })">
                     <svg class="w-6 h-6 text-white" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -79,7 +87,8 @@ const inputProperties = ref([{
     internalId: uuidv6(),
     name: '',
     id: false,
-    type: ''
+    type: 'String',
+    unique: false
 }]);
 
 function deteleProperty(internalId) {
@@ -89,9 +98,19 @@ function deteleProperty(internalId) {
 
 const properties = computed(() => {
     return inputProperties.value.map(e => {
-        const annotation = e.id ? new JavaAnnotation("Id") : new JavaAnnotation("none");
+        const idAnnotation = e.id ? new JavaAnnotation("Id") : new JavaAnnotation("none");
+        const annotations = [ ];
+        if(e.id){
+            annotations.push(new JavaAnnotation("Id"))
+        }
+        if(e.unique && !e.id){
+            annotations.push(new JavaAnnotation("Column", "unique = true"));
+        }
+        if(!e.id && !e.unique){
+            annotations.push(new JavaAnnotation("none"));
+        }
         const type = types.find(t => t.name === e.type);
-        return new JavaProperty(e.name, type, [annotation]);
+        return new JavaProperty(e.name, type, annotations);
     });
 })
 

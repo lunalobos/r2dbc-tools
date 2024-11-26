@@ -1,5 +1,6 @@
 <template>
-    <code :class="tokenStyle" lang="java"><span v-for="i in indentation" style="color:white;">{{tabulation}}</span>{{text}}<br v-if="nextLine"></code>
+    <span v-for="i in indentation" style="color:white;">{{tabulation}}</span>
+    <span :class="tokenStyle" lang="java">{{text}}<br v-if="nextLine"></span>
 </template>
 
 <script setup>
@@ -17,7 +18,7 @@ const nextLine = computed(() => props.token.nextLine);
 const indentation = computed(() => props.token.indentation);
 const space = computed(() => props.token.space);
 const text = computed(() => {
-    let text = (space.value ? ' ' : '') + value.value;
+    let text = (space.value ? '\u00A0' : '') + value.value;
     return text;
 });
 const tokenStyle = computed(() => `${type.value}-code`);

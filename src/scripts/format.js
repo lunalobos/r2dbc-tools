@@ -4,16 +4,18 @@ import { Languaje, Token } from './formatTypes.js';
 /**
  * 
  * @param {string} properties 
+ * @param {Languaje} languaje
  * @returns an array of token objects
  */
-export function tokens(code) {
+export function tokens(code, languaje) {
     const lines = code.split("/\r?\n/");
     const tokens = [];
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        const lineTokens = lineToTokens(line, java);
+        const lineTokens = lineToTokens(line, languaje);
         tokens.push(...lineTokens);
     }
+    console.log(tokens);
     return tokens;
 }
 
@@ -32,10 +34,21 @@ function lineToTokens(line, languaje) {
     let accumulateToken = '';
     for (let i = 0; i < characters.length; i++) {
         const char = characters[i];
-        if (/\t/.test(char)) {
+        if (/\t/.test(  )) {
             tabs++;
-        } else if (/ /.test(char)) {
-            space = true;
+        } else if (/ /.test(char) && !/\t/.test(  )) {
+            
+            if (accumulateToken.length > 0) {
+                const token = new Token(accumulateToken, type(accumulateToken, languaje), false, tabs, space);
+                tabs = 0;
+                space = false;
+                tokens.push(token);
+                accumulateToken = '';
+            }
+            const spaceToken = new Token('\u00A0', 'simple', false, 0, false);
+            tabs = 0;
+            space = false;
+            tokens.push(spaceToken);
         } else if (languaje.simbols.some(re => re.test(char))) {
             if (accumulateToken.length > 0) {
                 const token = new Token(accumulateToken, type(accumulateToken, languaje), false, tabs, space);
