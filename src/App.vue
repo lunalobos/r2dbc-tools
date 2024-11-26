@@ -19,7 +19,7 @@ function createCode(){
   const entityName = entityStore.name;
   const tableName = entityStore.table;
   const packageName = entityStore.packageName;
-  const entity = new JavaEntity(entityName, properties, tableName, packageName);
+  const entity = new JavaEntity(entityName, properties, `"${tableName}"`, packageName);
   code.value = entity.toString();
   sql.value = toSql(entity).toString();
 }
